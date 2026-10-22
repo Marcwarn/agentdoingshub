@@ -1,7 +1,7 @@
 # ADR 002 — Hosting migration gates and Vercel import failure
 
 Date: 2026-10-22
-Status: Proposed; no deployment or infrastructure change authorized by this document.
+Status: Proposed; no deployment or infrastructure change authorized by this document. Review against the user's existing project conventions before selecting a host.
 
 ## Verified failure
 
@@ -24,12 +24,12 @@ The GitHub Actions portable baseline runs `pnpm build`, which uses `scripts/run-
 
 1. Keep the original private Sites pilot untouched and preserve its source/history.
 2. Keep the existing CI baseline and core behavior tests as required checks.
-3. Select one path deliberately:
+3. Compare against the owner's existing project conventions before selecting a host. Do not privilege the source platform simply because the code originated there.\n4. Select one path deliberately:
    - **Cloudflare-compatible isolated host**: likely preserves Vinext/Workers/D1 with the fewest framework changes, but requires new Cloudflare ownership, auth and delegated connector configuration.
    - **Vercel target**: replace/adapt the Vinext build/runtime with a genuinely supported Vercel Next.js build, migrate D1 access to a compatible database, replace Sites identity/connector contracts, and verify runtime compatibility. This is a migration, not a framework-setting toggle.
-4. Run an isolated, non-production preview without real customer data, using only reviewed environment settings. Verify static pages, API routes, authentication refusal when unauthenticated, tenant isolation, DB persistence, and server streaming.
-5. Only then wire up provider access and model credentials in protected server environment settings. Use actual provider receipts and live eval runs before considering production.
-6. Release to an explicit target only after reviewing the preview and documenting rollback.
+5. Run an isolated, non-production preview without real customer data, using only reviewed environment settings. Verify static pages, API routes, authentication refusal when unauthenticated, tenant isolation, DB persistence, and server streaming.
+6. Only then wire up provider access and model credentials in protected server environment settings. Use actual provider receipts and live eval runs before considering production.
+7. Release to an explicit target only after reviewing the preview and documenting rollback.
 
 ## Acceptance criteria
 
@@ -49,3 +49,22 @@ Build an adapter-independent, tenant-aware append-only event repository and test
 - Vercel deployment and build logs for `dpl_AUBWmUHw4mdfXeTRBWdK4wqP2jtD`, inspected 2026-10-22.
 - Repository `package.json`, `scripts/run-framework.mjs`, `db/index.ts`, `app/chatgpt-auth.ts`, `lib/connector-context.ts`, `docs/CODEX_HANDOFF.md`.
 - GitHub Actions Portable baseline in `.github/workflows/portable-baseline.yml`.
+
+## Cross-project review — Doings engineering conventions (2026-10-22)
+
+Grounded examples inspected in Marcwarn GitHub repositories:
+
+- `sessions/README.md`: separate Vercel project, explicit `apps/web` root directory, production branch `main`, separate Neon database; cloud integrations not considered configured until verified. Sessions and Doingsflow are intentionally isolated.
+- `doingsflow/README.md`: exported Sites project is a portable source handoff, not a mandate to retain Sites hosting. Exported source excludes operational database contents, R2 files, credentials and external bot implementation.
+- `doings-brief/package.json`: conventional Next.js runtime (`next build`), comprehensive regression checks and architecture/public-access checks. This is not the same deployment adapter as Vinext.
+- `customer-intel-azure/package.json`: dedicated Microsoft Graph worker, separate from the frontend, with explicit typecheck/build commands; Azure integration is an independent component.
+- `doings-evidence-mcp/package.json`: independently deployable Azure MCP component with health and remote smoke checks.
+- Previous CRM implementation practice: deterministic intent handling and validation before LLM rendering; don't replace grounded computation with model guesses.
+
+### Revised target direction
+
+**Target architecture preference for the independent Agent Hub:** GitHub is source of truth; a dedicated Vercel project for a genuine Next.js web frontend; an isolated, user-scoped Neon/PostgreSQL database or justified Supabase alternative; independently deployed background workers where necessary; verified Entra/OIDC login and per-user delegated integrations; CI, staging, traceability and rollback. This is a **target**, not a claim that current Vinext code can run unmodified on Vercel. Do not share the Sessions, Doingsflow, CRM or Doings Brief databases or credentials.
+
+**Cloudflare-compatible hosting remains a technical fallback or transitional preview option**, not the default simply because the original Sites prototype used Cloudflare D1. Preserve source, UI, agent identities, contracts and evals while migrating platform dependencies deliberately.
+
+Before further platform work, trace the existing feature set and compare against these examples; write a migration map with per-route impacts, owner identity boundary, data model and rollout tests. Do not provision a new host or database or move customer data before confirming actual requirements and integration behavior.
