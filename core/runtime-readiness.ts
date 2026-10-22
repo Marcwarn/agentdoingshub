@@ -1,12 +1,12 @@
-export type RuntimeReadiness = {
-  ready: boolean;
-  checks: { identity: boolean; database: boolean; agents: boolean };
+export type RuntimeConfiguration = {
+  configured: boolean;
+  checks: { identityConfiguration: boolean; databaseConfiguration: boolean; agentConfiguration: boolean };
 };
 
-/** Never return credentials, variable values or a list of missing secret names. */
-export function runtimeReadiness(env: Record<string, string | undefined>): RuntimeReadiness {
-  const identity = Boolean(env.ENTRA_CLIENT_ID && env.ENTRA_TENANT_ID && env.ENTRA_CLIENT_SECRET && env.AGENT_HUB_SESSION_SECRET);
-  const database = Boolean(env.AGENT_HUB_DATABASE_URL);
-  const agents = Boolean(env.OPENAI_API_KEY);
-  return { ready: identity && database && agents, checks: { identity, database, agents } };
+/** Configuration presence only; does not prove connectivity, valid secrets, or runtime readiness. */
+export function runtimeConfiguration(env: Record<string, string | undefined>): RuntimeConfiguration {
+  const identityConfiguration = Boolean(env.ENTRA_CLIENT_ID && env.ENTRA_TENANT_ID && env.ENTRA_CLIENT_SECRET && env.AGENT_HUB_SESSION_SECRET);
+  const databaseConfiguration = Boolean(env.AGENT_HUB_DATABASE_URL);
+  const agentConfiguration = Boolean(env.OPENAI_API_KEY);
+  return { configured: identityConfiguration && databaseConfiguration && agentConfiguration, checks: { identityConfiguration, databaseConfiguration, agentConfiguration } };
 }
