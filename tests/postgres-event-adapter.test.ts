@@ -18,6 +18,8 @@ test("transactional append uses scope, version and committed receipt", async () 
   const receipt = await new PostgresEventAdapter(pool).append(scope, 0, event);
   assert.deepEqual(receipt, { version: 1, eventId: "e1" });
   assert.ok(statements.some(x => x.sql === "COMMIT"));
+  assert.ok(statements.some(x => x.sql.includes("agent_hub.hub_runs")));
+  assert.ok(statements.some(x => x.sql.includes("agent_hub.hub_run_events")));
   assert.deepEqual(statements.find(x => x.sql.startsWith("SELECT current_version"))?.params, ["doings", "alice", "run1"]);
   assert.equal(statements.at(-1)?.sql, "RELEASE");
 });
