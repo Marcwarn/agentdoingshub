@@ -30,7 +30,9 @@ jobs:
       - name: Core behavior regression tests
         run: |
           mkdir -p .test-output
-          pnpm exec esbuild tests/core.test.ts --bundle --platform=node --format=esm --packages=external --outfile=.test-output/core.test.mjs
+          ESBUILD_BIN=$(find node_modules/.pnpm -path '*/node_modules/esbuild/bin/esbuild' -type f -print -quit)
+          test -n "$ESBUILD_BIN"
+          node "$ESBUILD_BIN" tests/core.test.ts --bundle --platform=node --format=esm --packages=external --outfile=.test-output/core.test.mjs
           node --test .test-output/core.test.mjs
       - name: Typecheck
         run: pnpm exec tsc --noEmit
