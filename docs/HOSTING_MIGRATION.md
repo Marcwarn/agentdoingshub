@@ -68,3 +68,29 @@ Grounded examples inspected in Marcwarn GitHub repositories:
 **Cloudflare-compatible hosting remains a technical fallback or transitional preview option**, not the default simply because the original Sites prototype used Cloudflare D1. Preserve source, UI, agent identities, contracts and evals while migrating platform dependencies deliberately.
 
 Before further platform work, trace the existing feature set and compare against these examples; write a migration map with per-route impacts, owner identity boundary, data model and rollout tests. Do not provision a new host or database or move customer data before confirming actual requirements and integration behavior.
+
+## Route and data migration map — verified source audit
+
+| Surface | Current trust/data dependency | Target implementation | Test before enabling |
+| --- | --- | --- | --- |
+| `GET /api/tasks` | `getChatGPTUser()` from platform headers; `core/store.list/auditList` via Cloudflare D1 | Verified Entra server session, tenant+owner-scoped repository | Anonymous 401, spoofed Sites headers 401, users A/B cannot enumerate each other's runs |
+| `POST /api/tasks` | Same identity; `validOrigin`; `gather()` invokes request-scoped connectors; `save()` stores task metadata | Verified session and CSRF checks; typed runtime job enqueue and durable DB transaction; delegated integrations injected per request | Missing permission blocks safely, duplicate create is idempotent, no fabricated completion, persistence survives restart |
+| `DELETE /api/task` | Identity + same-origin checks; `remove(owner,id)` | Tenant-scoped deletion and tombstone/audit retention consistent with policy | User B cannot delete user A; cross-site POST/DELETE rejected; retention policy honored |
+| `POST /mcp` | JSON-RPC transport; Sites identity headers; metadata-only lookup; owner-scoped D1 | Protected MCP resource endpoint, verified OAuth audience/scopes and per-user identity; preserve read-only tool contracts until authorized | No anonymous tools/call; tools/list metadata does not leak secrets; owner-scoped get_task_status |
+| `/api/source` | Per-request connector bindings, user identity, ephemeral source lookup | Per-user delegated adapter with scope and source ACL recheck at each read | Unauthorized source fails closed; private channels and other customers never surface |
+| UI and voice | Vinext rendering and browser speech controls | Standard Next.js Vercel frontend using typed backend API; shared run IDs across text/voice | No header spoofing, route smoke test, voice and text reuse run state |
+| `core/store.ts` | D1 `tasks`/`audit` SQLite schema; per-user 30-day metadata retention | Dedicated PostgreSQL repository and append-only events; tenant+owner in every query and index; background expiry | Migration applies cleanly, durable replay matches projection, data isolated, deletion and cleanup verified |
+| `core/agents.ts` | SDK is present but gated and not invoked by UI | Worker-owned orchestrator; bounded capability registry, review and receipts; no external action by default | Failure, timeout, retries, and approvals represented as real events and audited |
+
+### Sequencing and anti-derail guardrails
+
+1. Preserve the existing UI and eleven named agent identities during hosting work; do not redesign the product as a side effect of deployment fixes.
+2. Extract identity, persistence and provider access behind interfaces first, with tests; only then select their host-specific implementations.
+3. Implement append-only event storage with durable transaction semantics and run ownership before implementing UI status streams. Client must render actual persisted events only.
+4. Keep the original Sites deployment unmodified and never point a new preview to an existing CRM, Sessions or other project's database.
+5. Treat the Vercel build failure as a separate adapter migration ticket, not a justification to switch the entire architecture back to Cloudflare.
+6. Require a runnable staging smoke test (auth, database, routes, MCP, streaming) before enabling AI/provider credentials or making any production deployment.
+
+### Explicitly not completed
+
+No new PostgreSQL instance, Entra application, real provider OAuth connection, AI runtime or independent Vercel preview has been provisioned by this documentation work. Existing `core/agent-run-projection.ts` performs in-memory validated replay but does not yet persist events.
