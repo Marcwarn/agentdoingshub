@@ -8,4 +8,4 @@ Never grant access to `anon` or `authenticated` for these private tables. Provis
 
 Avoid using the Supabase admin/management database role in the application. Custom GUCs are not secrets and are not an authentication mechanism: the DB connection must be server-only, protected, scoped, and incapable of running arbitrary user SQL. Run cross-tenant and unauthorized tests on the **actual restricted role** before enabling endpoints.
 
-Current PostgresEventAdapter does not yet set transaction-local identity or use an authorized least-privilege connection, so it must not be enabled against these policies until updated and integrated.
+PostgresEventAdapter now sets transaction-local scope for both reads and writes, but it does not yet have an actual restricted database connection or a verified API authentication integration. It must not be enabled until the restricted-role, end-to-end authorization and cross-tenant tests pass.
