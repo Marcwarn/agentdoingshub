@@ -31,21 +31,21 @@ export class PostgresEventAdapter implements DurableEventAdapter {
       await client.query("BEGIN");
       // A run is created only within an already verified caller scope.
       await client.query(
-        "INSERT INTO hub_runs (tenant_id, owner_id, run_id) VALUES ($1,$2,$3) ON CONFLICT DO NOTHING",
+        "INSERT INTO agent_hub.hub_runs (tenant_id, owner_id, run_id) VALUES ($1,$2,$3) ON CONFLICT DO NOTHING",
         [scope.tenantId, scope.ownerId, scope.runId],
       );
       const lock = await client.query<{ current_version: number | string }>(
-        "SELECT current_version FROM hub_runs WHERE tenant_id=$1 AND owner_id=$2 AND run_id=$3 FOR UPDATE",
+        "SELECT current_version FROM agent_hub.hub_runs WHERE tenant_id=$1 AND owner_id=$2 AND run_id=$3 FOR UPDATE",
         [scope.tenantId, scope.ownerId, scope.runId],
       );
       if (lock.rows.length !== 1) throw new Error("RUN_SCOPE_CONFLICT");
       if (Number(lock.rows[0].current_version) !== expectedVersion) throw new Error("VERSION_CONFLICT");
       await client.query(
-        "INSERT INTO hub_run_events (tenant_id, owner_id, run_id, version, event_id, event_json) VALUES ($1,$2,$3,$4,$5,$6::jsonb)",
+        "INSERT INTO agent_hub.hub_run_events (tenant_id, owner_id, run_id, version, event_id, event_json) VALUES ($1,$2,$3,$4,$5,$6::jsonb)",
         [scope.tenantId, scope.ownerId, scope.runId, expectedVersion + 1, parsed.eventId, JSON.stringify(parsed)],
       );
       await client.query(
-        "UPDATE hub_runs SET current_version=$4 WHERE tenant_id=$1 AND owner_id=$2 AND run_id=$3",
+        "UPDATE agent_hub.hub_runs SET current_version=$4 WHERE tenant_id=$1 AND owner_id=$2 AND run_id=$3",
         [scope.tenantId, scope.ownerId, scope.runId, expectedVersion + 1],
       );
       await client.query("COMMIT");
@@ -61,7 +61,7 @@ export class PostgresEventAdapter implements DurableEventAdapter {
   async read(scope: RunScope): Promise<readonly AgentEvent[]> {
     validateRunScope(scope);
     const result = await this.pool.query<{ event_json: unknown }>(
-      "SELECT event_json FROM hub_run_events WHERE tenant_id=$1 AND owner_id=$2 AND run_id=$3 ORDER BY version ASC",
+      "SELECT event_json FROM agent_hub.hub_run_events WHERE tenant_id=$1 AND owner_id=$2 AND run_id=$3 ORDER BY version ASC",
       [scope.tenantId, scope.ownerId, scope.runId],
     );
     return result.rows.map(row => AgentEventSchema.parse(row.event_json));
