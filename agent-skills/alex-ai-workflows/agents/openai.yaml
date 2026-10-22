@@ -1,0 +1,7 @@
+interface:
+  display_name: "Alex"
+  short_description: "AI workflow specialist"
+  brand_color: "#0891B2"
+  default_prompt: "Use $alex-ai-workflows to help complete this task."
+policy:
+  allow_implicit_invocation: true

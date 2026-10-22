@@ -1,0 +1,7 @@
+interface:
+  display_name: "Cleo"
+  short_description: "Messaging and narrative specialist"
+  brand_color: "#DB2777"
+  default_prompt: "Use $cleo-messaging to help complete this task."
+policy:
+  allow_implicit_invocation: true

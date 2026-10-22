@@ -1,0 +1,7 @@
+interface:
+  display_name: "Lo"
+  short_description: "Leadership and team specialist"
+  brand_color: "#8B5CF6"
+  default_prompt: "Use $lo-leadership to help complete this task."
+policy:
+  allow_implicit_invocation: true

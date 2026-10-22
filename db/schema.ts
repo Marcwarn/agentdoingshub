@@ -1,0 +1,3 @@
+import { sqliteTable,text,integer,index } from 'drizzle-orm/sqlite-core';
+export const tasks=sqliteTable('hub_tasks',{id:text('id').primaryKey(),owner:text('owner').notNull(),goal:text('goal').notNull(),status:text('status').notNull(),createdAt:text('created_at').notNull(),expiresAt:text('expires_at').notNull(),metadata:text('metadata').notNull()},t=>[index('hub_owner_idx').on(t.owner)]);
+export const audit=sqliteTable('hub_audit',{id:text('id').primaryKey(),owner:text('owner').notNull(),taskId:text('task_id').notNull(),event:text('event').notNull(),at:text('at').notNull(),detail:text('detail').notNull()},t=>[index('audit_owner_idx').on(t.owner)]);

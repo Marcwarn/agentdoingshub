@@ -1,0 +1,7 @@
+interface:
+  display_name: "Vera"
+  short_description: "Change and adoption specialist"
+  brand_color: "#2563EB"
+  default_prompt: "Use $vera-change to help complete this task."
+policy:
+  allow_implicit_invocation: true

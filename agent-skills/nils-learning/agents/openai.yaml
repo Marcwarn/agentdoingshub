@@ -1,0 +1,7 @@
+interface:
+  display_name: "Nils"
+  short_description: "Learning design specialist"
+  brand_color: "#65A30D"
+  default_prompt: "Use $nils-learning to help complete this task."
+policy:
+  allow_implicit_invocation: true

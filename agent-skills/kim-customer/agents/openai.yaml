@@ -1,0 +1,7 @@
+interface:
+  display_name: "Kim"
+  short_description: "Customer and business specialist"
+  brand_color: "#0F766E"
+  default_prompt: "Use $kim-customer to help complete this task."
+policy:
+  allow_implicit_invocation: true

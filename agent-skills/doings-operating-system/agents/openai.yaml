@@ -1,0 +1,7 @@
+interface:
+  display_name: "Doings Operating System"
+  short_description: "Shared agent work contract"
+  brand_color: "#4F46E5"
+  default_prompt: "Use $doings-operating-system to help complete this task."
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,2 @@
+import {getChatGPTUser} from '@/app/chatgpt-auth';import {remove} from '@/core/store';import {validOrigin} from '@/core/contracts';
+export async function DELETE(req:Request){const u=await getChatGPTUser();if(!u)return new Response(null,{status:401});if(!validOrigin(req.headers.get('origin'),req.url))return new Response(null,{status:403});const id=new URL(req.url).searchParams.get('id');if(!id)return new Response(null,{status:400});await remove(u.userId,id);return Response.json({deleted:true},{headers:{'Cache-Control':'no-store'}});}

@@ -1,0 +1,7 @@
+interface:
+  display_name: "Chief of Staff"
+  short_description: "Orchestrates goals across the team"
+  brand_color: "#111827"
+  default_prompt: "Use $chief-of-staff to help complete this task."
+policy:
+  allow_implicit_invocation: true

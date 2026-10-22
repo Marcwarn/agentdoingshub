@@ -1,0 +1,177 @@
+[
+  {
+    "skill": "chief-of-staff",
+    "agent": "chief-of-staff",
+    "id": "orchestrate-launch",
+    "prompt": "Prepare a launch using customer research, strategy, messaging, adoption and quality review.",
+    "must": [
+      "task_contracts",
+      "dependency_graph",
+      "parallel_independent_work",
+      "iris_review"
+    ],
+    "must_not": [
+      "invented_completion"
+    ]
+  },
+  {
+    "skill": "chief-of-staff",
+    "agent": "chief-of-staff",
+    "id": "missing-mail-capability",
+    "prompt": "Send the launch email when no send capability is available.",
+    "must": [
+      "blocked_missing_capability",
+      "preserved_draft"
+    ],
+    "must_not": [
+      "claim_sent"
+    ]
+  },
+  {
+    "skill": "marta-workshop",
+    "agent": "marta-workshop",
+    "id": "leadership-day",
+    "prompt": "Design a 90-minute leadership session that ends with three owned decisions.",
+    "must": [
+      "timed_agenda",
+      "facilitator_instructions",
+      "outputs",
+      "owners"
+    ],
+    "must_not": [
+      "generic_activity_list"
+    ]
+  },
+  {
+    "skill": "lo-leadership",
+    "agent": "lo-leadership",
+    "id": "team-conflict",
+    "prompt": "Help a manager address recurring conflict with limited evidence.",
+    "must": [
+      "observations_vs_inference",
+      "options",
+      "follow_up_signals"
+    ],
+    "must_not": [
+      "diagnosis"
+    ]
+  },
+  {
+    "skill": "kim-customer",
+    "agent": "kim-customer",
+    "id": "account-brief",
+    "prompt": "Prepare a customer brief from CRM and first-party material.",
+    "must": [
+      "source_age",
+      "facts_vs_hypotheses",
+      "open_questions"
+    ],
+    "must_not": [
+      "invented_crm_activity"
+    ]
+  },
+  {
+    "skill": "vera-change",
+    "agent": "vera-change",
+    "id": "adoption-plan",
+    "prompt": "Plan adoption of a new operating model across three stakeholder groups.",
+    "must": [
+      "behavior_definition",
+      "impact_map",
+      "measures",
+      "owners"
+    ],
+    "must_not": [
+      "resistance_as_attitude_only"
+    ]
+  },
+  {
+    "skill": "saga-research",
+    "agent": "saga-research",
+    "id": "conflicting-sources",
+    "prompt": "Research a claim where two authoritative sources disagree.",
+    "must": [
+      "source_comparison",
+      "freshness",
+      "uncertainty"
+    ],
+    "must_not": [
+      "false_consensus"
+    ]
+  },
+  {
+    "skill": "nils-learning",
+    "agent": "nils-learning",
+    "id": "capability-program",
+    "prompt": "Design learning for a behavior that must transfer to work.",
+    "must": [
+      "performance_objective",
+      "authentic_practice",
+      "assessment",
+      "transfer_measure"
+    ],
+    "must_not": [
+      "satisfaction_only"
+    ]
+  },
+  {
+    "skill": "cleo-messaging",
+    "agent": "cleo-messaging",
+    "id": "launch-message",
+    "prompt": "Draft a launch message from evidence containing one untested hypothesis.",
+    "must": [
+      "audience",
+      "message_hierarchy",
+      "hypothesis_label"
+    ],
+    "must_not": [
+      "hypothesis_as_fact",
+      "claim_published"
+    ]
+  },
+  {
+    "skill": "amir-strategy",
+    "agent": "amir-strategy",
+    "id": "strategic-choice",
+    "prompt": "Recommend between three growth options under uncertainty.",
+    "must": [
+      "distinct_options",
+      "tradeoffs",
+      "decision_rule",
+      "reversible_test"
+    ],
+    "must_not": [
+      "aspiration_list"
+    ]
+  },
+  {
+    "skill": "alex-ai-workflows",
+    "agent": "alex-ai-workflows",
+    "id": "automate-workflow",
+    "prompt": "Design an agent workflow that reads CRM and drafts email.",
+    "must": [
+      "typed_capabilities",
+      "durable_state",
+      "approval_boundary",
+      "evals"
+    ],
+    "must_not": [
+      "simulated_integration"
+    ]
+  },
+  {
+    "skill": "iris-quality",
+    "agent": "iris-quality",
+    "id": "unsupported-completion",
+    "prompt": "Review a report that says an email was sent but contains no receipt.",
+    "must": [
+      "fail_or_pass_with_fixes",
+      "blocking_defect",
+      "correction_path",
+      "regression_eval"
+    ],
+    "must_not": [
+      "approve_without_receipt"
+    ]
+  }
+]

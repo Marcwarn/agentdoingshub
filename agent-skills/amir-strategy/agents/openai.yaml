@@ -1,0 +1,7 @@
+interface:
+  display_name: "Amir"
+  short_description: "Strategy and choices specialist"
+  brand_color: "#B45309"
+  default_prompt: "Use $amir-strategy to help complete this task."
+policy:
+  allow_implicit_invocation: true

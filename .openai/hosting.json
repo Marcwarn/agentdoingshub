@@ -1,0 +1,42 @@
+{
+  "d1": "DB",
+  "r2": null,
+  "project_id": "appgprj_6ac9ddc47194819195709431a1b9dbbe",
+  "capabilities": [
+    "mcp"
+  ],
+  "plugins": [
+    {
+      "id": "plugin_asdk_app_6ac8fbb4ab088191bbea0101b5ac91e4",
+      "connector_ids": [
+        "asdk_app_6ac8fbb4ab088191bbea0101b5ac91e4"
+      ]
+    },
+    {
+      "id": "plugin_connector_1p_dca009ae2c848191ae14df3a47c5e7fd",
+      "connector_ids": [
+        "connector_1e4f6a44acf14e3ca1d96672f8c945bc"
+      ]
+    },
+    {
+      "id": "plugin_asdk_app_69a1d78e929881919bba0dbda1f6436d",
+      "connector_ids": [
+        "asdk_app_69a1d78e929881919bba0dbda1f6436d"
+      ]
+    }
+  ],
+  "connectors": [
+    {
+      "id": "asdk_app_6ac8fbb4ab088191bbea0101b5ac91e4",
+      "action_selection_mode": "read_only"
+    },
+    {
+      "id": "connector_1e4f6a44acf14e3ca1d96672f8c945bc",
+      "action_selection_mode": "read_only"
+    },
+    {
+      "id": "asdk_app_69a1d78e929881919bba0dbda1f6436d",
+      "action_selection_mode": "read_only"
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+interface:
+  display_name: "Märta"
+  short_description: "Workshop and facilitation specialist"
+  brand_color: "#F97316"
+  default_prompt: "Use $marta-workshop to help complete this task."
+policy:
+  allow_implicit_invocation: true

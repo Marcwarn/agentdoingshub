@@ -1,0 +1,7 @@
+interface:
+  display_name: "Iris"
+  short_description: "Independent quality specialist"
+  brand_color: "#DC2626"
+  default_prompt: "Use $iris-quality to help complete this task."
+policy:
+  allow_implicit_invocation: true
