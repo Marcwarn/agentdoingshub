@@ -42,6 +42,8 @@ jobs:
           node --test .test-output/postgres-event-adapter.test.mjs
           "$ESBUILD_BIN" tests/trusted-run-scope.test.ts --bundle --platform=node --format=esm --packages=external --outfile=.test-output/trusted-run-scope.test.mjs
           node --test .test-output/trusted-run-scope.test.mjs
+          "$ESBUILD_BIN" tests/runtime-readiness.test.ts --bundle --platform=node --format=esm --packages=external --outfile=.test-output/runtime-readiness.test.mjs
+          node --test .test-output/runtime-readiness.test.mjs
       - name: Typecheck
         run: pnpm exec tsc --noEmit
       - name: Native Next.js production build
