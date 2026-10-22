@@ -40,3 +40,12 @@ Open the exported source directory in Codex, read AGENTS.md and CODEX_HANDOFF.md
 ## Batched transfer
 
 Two large binary files are preserved as base64 chunks under transfer-parts/. Run node scripts/restore-transfer.mjs after checkout to restore the avatar atlas and original Git bundle. Both are verified against SHA-256 hashes. Application source and instructions remain ordinary files.
+
+## Completed GitHub verification — 2026-10-22
+
+- All 45 upload batches are committed to main in public Marcwarn/agentdoingshub; complete import commit dd0b9e06c1615cbec6f70f7e5716ff1338d49c53.
+- Cloned GitHub independently and compared all 261 uploaded files byte for byte against the prepared batches: exact match.
+- Ran scripts/restore-transfer.mjs on that fresh checkout: both original binaries restored with matching SHA-256 hashes.
+- git bundle verify confirms complete original history. Skills validator passed 12 skills and 12 eval definitions; these remain structural checks, not live agent runs.
+- Fresh dependency installation, TypeScript check, production build and independent application deployment remain pending.
+- Next: open Marcwarn/agentdoingshub in Codex, run node scripts/restore-transfer.mjs, read AGENTS.md and docs/CODEX_HANDOFF.md, then verify the portable baseline before implementing the runtime.
