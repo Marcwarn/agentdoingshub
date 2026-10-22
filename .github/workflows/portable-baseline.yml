@@ -36,6 +36,8 @@ jobs:
           node --test .test-output/core.test.mjs
           "$ESBUILD_BIN" tests/agent-run-projection.test.ts --bundle --platform=node --format=esm --packages=external --outfile=.test-output/agent-run-projection.test.mjs
           node --test .test-output/agent-run-projection.test.mjs
+          "$ESBUILD_BIN" tests/run-event-store.test.ts --bundle --platform=node --format=esm --packages=external --outfile=.test-output/run-event-store.test.mjs
+          node --test .test-output/run-event-store.test.mjs
       - name: Typecheck
         run: pnpm exec tsc --noEmit
       - name: Production build
