@@ -1,0 +1,33 @@
+name: Portable baseline
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.25.0
+          run_install: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: pnpm
+      - name: Restore and verify exported assets
+        run: node scripts/restore-transfer.mjs
+      - name: Install pinned dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Validate specialist skills and eval definitions
+        run: node scripts/validate-agent-skills.mjs
+      - name: Typecheck
+        run: pnpm exec tsc --noEmit
+      - name: Production build
+        run: pnpm build
