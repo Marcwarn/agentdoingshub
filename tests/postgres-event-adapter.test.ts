@@ -18,6 +18,7 @@ test("transactional append uses scope, version and committed receipt", async () 
   const receipt = await new PostgresEventAdapter(pool).append(scope, 0, event);
   assert.deepEqual(receipt, { version: 1, eventId: "e1" });
   assert.ok(statements.some(x => x.sql === "COMMIT"));
+  assert.deepEqual(statements.find(x => x.sql.includes("set_config"))?.params, ["doings", "alice"]);
   assert.ok(statements.some(x => x.sql.includes("agent_hub.hub_runs")));
   assert.ok(statements.some(x => x.sql.includes("agent_hub.hub_run_events")));
   assert.deepEqual(statements.find(x => x.sql.startsWith("SELECT current_version"))?.params, ["doings", "alice", "run1"]);
@@ -40,13 +41,20 @@ test("stale append rolls back and releases connection", async () => {
   assert.equal(statements.at(-1), "RELEASE");
 });
 
-test("reads use full scope and validate persisted events", async () => {
-  let params: readonly unknown[] = [];
-  const pool: SqlPool = {
-    async connect() { throw new Error("not used"); },
-    async query(_sql, values) { params = values ?? []; return { rows: [{ event_json: event }] } as any; },
+test("reads use a scoped transaction and validate events", async () => {
+  const statements: Array<{ sql: string; params: readonly unknown[] }> = [];
+  const client: SqlClient = {
+    async query(sql, params = []) {
+      statements.push({ sql, params });
+      return { rows: sql.startsWith("SELECT event_json") ? [{ event_json: event }] : [] } as any;
+    },
+    release() { statements.push({ sql: "RELEASE", params: [] }); },
   };
+  const pool: SqlPool = { async connect() { return client; }, async query() { throw new Error("unscoped pool query prohibited"); } };
   const rows = await new PostgresEventAdapter(pool).read(scope);
   assert.equal(rows.length, 1);
-  assert.deepEqual(params, ["doings", "alice", "run1"]);
+  assert.deepEqual(statements.find(x=>x.sql.includes("set_config"))?.params,["doings","alice"]);
+  assert.deepEqual(statements.find(x=>x.sql.startsWith("SELECT event_json"))?.params, ["doings", "alice", "run1"]);
+  assert.ok(statements.some(x=>x.sql==="COMMIT"));
+  assert.equal(statements.at(-1)?.sql,"RELEASE");
 });

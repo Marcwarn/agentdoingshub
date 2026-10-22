@@ -29,6 +29,7 @@ export class PostgresEventAdapter implements DurableEventAdapter {
     const client = await this.pool.connect();
     try {
       await client.query("BEGIN");
+      await client.query("SELECT set_config('app.tenant_id', $1, true), set_config('app.owner_id', $2, true)", [scope.tenantId, scope.ownerId]);
       // A run is created only within an already verified caller scope.
       await client.query(
         "INSERT INTO agent_hub.hub_runs (tenant_id, owner_id, run_id) VALUES ($1,$2,$3) ON CONFLICT DO NOTHING",
@@ -60,10 +61,20 @@ export class PostgresEventAdapter implements DurableEventAdapter {
 
   async read(scope: RunScope): Promise<readonly AgentEvent[]> {
     validateRunScope(scope);
-    const result = await this.pool.query<{ event_json: unknown }>(
-      "SELECT event_json FROM agent_hub.hub_run_events WHERE tenant_id=$1 AND owner_id=$2 AND run_id=$3 ORDER BY version ASC",
-      [scope.tenantId, scope.ownerId, scope.runId],
-    );
-    return result.rows.map(row => AgentEventSchema.parse(row.event_json));
+    const client = await this.pool.connect();
+    try {
+      await client.query("BEGIN READ ONLY");
+      await client.query("SELECT set_config(\'app.tenant_id\', $1, true), set_config(\'app.owner_id\', $2, true)", [scope.tenantId, scope.ownerId]);
+      const result = await client.query<{ event_json: unknown }>(
+        "SELECT event_json FROM agent_hub.hub_run_events WHERE tenant_id=$1 AND owner_id=$2 AND run_id=$3 ORDER BY version ASC",
+        [scope.tenantId, scope.ownerId, scope.runId],
+      );
+      const events = result.rows.map(row => AgentEventSchema.parse(row.event_json));
+      await client.query("COMMIT");
+      return events;
+    } catch (error) {
+      try { await client.query("ROLLBACK"); } catch { /* preserve failure */ }
+      throw error;
+    } finally { client.release(); }
   }
 }
