@@ -30,11 +30,11 @@ export async function verifyEntraAccessToken(
   if (claims.iss !== issuer || claims.tid !== config.tenantId || claims.aud !== config.audience) throw new Error("INVALID_CLAIMS");
   if (typeof claims.oid !== "string" || !/^[a-fA-F0-9-]{36}$/.test(claims.oid)) throw new Error("INVALID_SUBJECT");
   if (typeof claims.exp !== "number" || !Number.isSafeInteger(claims.exp) || claims.exp <= nowSeconds ||
-    typeof claims.nbf !== "number" || claims.nbf > nowSeconds + 60) throw new Error("TOKEN_EXPIRED_OR_PREMATURE");
+    typeof claims.nbf !== "number" || !Number.isSafeInteger(claims.nbf) || claims.nbf > nowSeconds + 60) throw new Error("TOKEN_EXPIRED_OR_PREMATURE");
   const jwks = record(await getKeys(`https://login.microsoftonline.com/${config.tenantId}/discovery/v2.0/keys`));
   if (!Array.isArray(jwks.keys)) throw new Error("INVALID_JWKS");
   const key = jwks.keys.map(record).find(k => k.kid === header.kid && k.kty === "RSA" &&
-    k.use === "sig" && k.alg === "RS256");
+    (k.use === undefined || k.use === "sig") && (k.alg === undefined || k.alg === "RS256"));
   if (!key) throw new Error("UNKNOWN_SIGNING_KEY");
   const publicKey = createPublicKey({ key: key as JsonWebKey, format: "jwk" });
   if (!verifySignature("RSA-SHA256", Buffer.from(parts[0] + "." + parts[1]), publicKey, Buffer.from(parts[2], "base64url"))) throw new Error("INVALID_SIGNATURE");
