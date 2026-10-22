@@ -46,6 +46,8 @@ jobs:
           node --test .test-output/runtime-readiness.test.mjs
           "$ESBUILD_BIN" tests/entra-token-verifier.test.ts --bundle --platform=node --format=esm --packages=external --outfile=.test-output/entra-token-verifier.test.mjs
           node --test .test-output/entra-token-verifier.test.mjs
+          "$ESBUILD_BIN" tests/entra-oidc-pkce.test.ts --bundle --platform=node --format=esm --packages=external --outfile=.test-output/entra-oidc-pkce.test.mjs
+          node --test .test-output/entra-oidc-pkce.test.mjs
       - name: Typecheck
         run: pnpm exec tsc --noEmit
       - name: Native Next.js production build
