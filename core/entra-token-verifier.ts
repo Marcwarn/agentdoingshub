@@ -36,7 +36,7 @@ export async function verifyEntraAccessToken(
   const key = jwks.keys.map(record).find(k => k.kid === header.kid && k.kty === "RSA" &&
     (k.use === undefined || k.use === "sig") && (k.alg === undefined || k.alg === "RS256"));
   if (!key) throw new Error("UNKNOWN_SIGNING_KEY");
-  const publicKey = createPublicKey({ key: key as JsonWebKey, format: "jwk" });
+  const publicKey = createPublicKey({ key, format: "jwk" } as unknown as Parameters<typeof createPublicKey>[0]);
   if (!verifySignature("RSA-SHA256", Buffer.from(parts[0] + "." + parts[1]), publicKey, Buffer.from(parts[2], "base64url"))) throw new Error("INVALID_SIGNATURE");
   return { tenantId: config.tenantId, userId: claims.oid, issuer, audience: config.audience, expiresAt: claims.exp * 1000, verified: true };
 }
