@@ -44,5 +44,5 @@ jobs:
           node --test .test-output/trusted-run-scope.test.mjs
       - name: Typecheck
         run: pnpm exec tsc --noEmit
-      - name: Production build
-        run: pnpm build
+      - name: Native Next.js production build
+        run: node ./node_modules/next/dist/bin/next build
